@@ -3,7 +3,7 @@
 #include <graphics.h>
 int bx = 150, by = 150;
 bool generated = false;
-
+bool isdead = false;
 void changeX(int x)
 {
     bx = x;
@@ -11,6 +11,16 @@ void changeX(int x)
 void changeY(int y)
 {
     by = y;
+}
+
+bool isbotdead()
+{
+    return isdead;
+}
+
+void killbot()
+{
+    isdead = true;
 }
 
 int retBx()
@@ -24,6 +34,7 @@ int retBy()
 
 void SpawnAi()
 {
+    if(isdead == true) return;
     srand(time(0));
     if(!generated)
     {
@@ -37,6 +48,7 @@ void SpawnAi()
 
 void AiMove()
 {
+    if(isdead) return;
     srand(time(0));
     int pick = rand() % 4;
     if(pick == 1)
