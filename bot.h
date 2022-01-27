@@ -7,4 +7,6 @@ int retBx();
 int retBy();
 void changeX(int x);
 void changeY(int y);
+void killbot();
+bool isbotdead();
 #endif // BOT_H_INCLUDED
