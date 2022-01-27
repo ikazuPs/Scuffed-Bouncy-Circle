@@ -4,28 +4,64 @@
 #include <time.h> //for time
 #include "bot.h" //for bot
 #include <iostream> // for things
-
+#include <windows.h>
 
 using namespace std;
 
 
 void bullet(int x, int y);
 
+int hp = 100;
 int temp; //bullet range
-int x = 150/*280*/, y = 150/*370*/, csize = 10; //player position and size
+int x = 280/*280*/, y = 370/*370*/, csize = 10; //player position and size
 bool isShooting = false; // player is shooting or no u know
 bool one = false;
+int bulletx, bullety;
+bool dead = false;
+bool playing = true;
+
+void spawnPlayer()
+{
+    if(!dead) circle(x,y,csize);
+}
 
 
+void GameOver()
+{
+    cleardevice();
+    settextstyle(DEFAULT_FONT,HORIZ_DIR,2);
+    outtextxy(225,100,"Game Over You Lost");
+    getch();
+}
+
+void GameWin()
+{
+    cleardevice();
+    settextstyle(DEFAULT_FONT,HORIZ_DIR,2);
+    outtextxy(225,100,"Game Over You WON");
+    getch();
+}
 
 void printmap()
 {
     for(int i = 0 ; i < i+1; i++)
     {
-
+        bool botdead = isbotdead();
+         if(botdead == true)
+         {
+             playing = false;
+             GameWin();
+             break;
+         }
+         else if(dead == true)
+         {
+             playing = false;
+             GameOver();
+             break;
+         }
       settextstyle(DEFAULT_FONT,HORIZ_DIR,2);
       outtextxy(225,100,"PRESS WASD");
-      circle(x,y,csize);
+      spawnPlayer();
       SpawnAi();
       AiMove();
       if(!one)
@@ -36,6 +72,7 @@ void printmap()
       }
       cout << "------------------------------------------------" << endl;
       cout << "Player X : " << x << " Player Y : " << y << endl;
+      cout << "HP : " << hp << endl;
       cout << "------------------------------------------------" << endl;
       cout << "Bot X : " << retBx() << " Bot Y : " << retBy() << endl;
       cout << "------------------------------------------------" << endl;
@@ -126,7 +163,7 @@ void printmap()
 
 
 
-      /*if(x == 610)
+      if(x == 610)
       {
             for(int i = 60; i >= 0; i-=10)
             {
@@ -145,7 +182,7 @@ void printmap()
               y -= 60;
 
       }
-      else if(x == 70)
+      else if(x == 40)
       {
             for(int i = 0; i <= 60; i+=10)
             {
@@ -168,43 +205,19 @@ void printmap()
             y += 60;
 
 
-      }*/
-      if(x == 660)
-          {
-              for(int i = 60; i >= 0; i-=10)
-              {
-                  circle(x-i, y, csize);
-                  delay(10);
-              }
-              x -= 60;
-          }
-          else if(y == 0)
-          {
-            for(int i = 0; i <= 60; i+=10)
-            {
-                circle(x,y+i,csize);
-                delay(10);
-            }
-            y += 60;
-          }
-          else if(y == 480)
-          {
-               for(int i = 60; i >= 0; i-=10)
-                {
-                circle(x, y-i, csize);
-                delay(10);
-                }
-                y -= 60;
-          }
-          else if(x == 0)
-            {
-            for(int i = 0; i <= 60; i+=10)
-            {
-                circle(x+i, y, csize);
-                delay(10);
-            }
-            x += 60;
-            }
+      }
+
+     int tempx = x - botx;
+     int tempy = y - boty;
+     if(tempx <= 5 && tempy <= 2)
+     {
+         hp -= 10;
+         system("Color 0A");
+         if(hp <= 0)
+         {
+             dead = true;
+         }
+     }
 
       changeX(botx);
       changeY(boty);
@@ -231,6 +244,17 @@ void bullet(int x, int y)
     {
         circle(x + i, y, 5);
         delay(10);
+        bulletx = x + i;
+        bullety = y;
+        int botx = retBx();
+        int boty = retBy();
+        if(bulletx + 1 == botx || bulletx + 2 == botx || bulletx + 3 == botx || bulletx + 4 == botx || bulletx + 5 == botx)
+        {
+            if(y - boty <= 31)
+            {
+                killbot();
+            }
+        }
     }
 }
 
@@ -240,7 +264,7 @@ void bullet(int x, int y)
 int main()
 {
     setup();
-    while(true)
+    while(playing == true)
     {
         printmap();
     }
